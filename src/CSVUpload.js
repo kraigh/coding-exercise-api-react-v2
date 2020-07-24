@@ -58,19 +58,33 @@ export default class CSVReader1 extends Component {
         // import users
         for await (let person of this.state.data) {
             console.log(person.data);
+            let emailKey = Object.keys(person.data).filter(key => RegExp('.*email.*', 'i').test(key));
+            let firstKey = Object.keys(person.data).filter(key => RegExp('.*first.*', 'i').test(key));
+            let lastKey = Object.keys(person.data).filter(key => RegExp('.*last.*', 'i').test(key));
+            let statusKey = Object.keys(person.data).filter(key => RegExp('.*status.*', 'i').test(key));
+            if (emailKey && firstKey && lastKey && statusKey) {
 
-            const rawResponse = await fetch('http://127.0.0.1:8000/api/people', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(person.data)
-            });
-            const content = await rawResponse.json();
-            console.log(content);
-            if (content.errors) {
-                this.setState({errors: [...this.state.errors, content.errors]})
+                let validatedPerson = {
+                    'first_name': person.data[firstKey],
+                    'last_name': person.data[lastKey],
+                    'email_address': person.data[emailKey],
+                    'status': person.data[statusKey]
+                }
+
+
+                const rawResponse = await fetch('http://127.0.0.1:8000/api/people', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(validatedPerson)
+                });
+                const content = await rawResponse.json();
+                console.log(content);
+                if (content.errors) {
+                    this.setState({errors: [...this.state.errors, content.errors]})
+                }
             }
         };
         console.log('done');
