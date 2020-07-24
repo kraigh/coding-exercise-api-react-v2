@@ -1,6 +1,6 @@
 # Coding Exercise
 
-Hello, _______________!
+Hello, Kraig Hufstedler!
 
 Below is a coding exercise that we believe will allow you to show off your amazing development skills!
 
