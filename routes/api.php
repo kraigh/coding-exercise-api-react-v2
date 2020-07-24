@@ -14,3 +14,4 @@ use Illuminate\Http\Request;
 */
 
 Route::resource('people', 'PeopleController');
+Route::resource('groups', 'GroupController');
