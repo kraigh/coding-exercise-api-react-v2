@@ -13,7 +13,11 @@ export default class CSVReader1 extends Component {
 
     handleClose = () => this.setState({ modalOpen: false })
 
-    handleResultsClose = () => this.setState({ resultsModalOpen: false })
+    handleResultsClose = () => {
+        this.setState({ resultsModalOpen: false })
+        this.setState({data: {}})
+        this.setState({errors: []})
+    }
 
     handleOpenDialog = (e) => {
         // Note that the ref is set async, so it might be null at some point 
@@ -54,17 +58,6 @@ export default class CSVReader1 extends Component {
         // import users
         for await (let person of this.state.data) {
             console.log(person.data);
-            // fetch('http://127.0.0.1:8000/api/people',
-            //     {
-            //         headers: {
-            //             'Accept': 'application/json',
-            //             'Content-Type': 'application/json'
-            //         },
-            //         method: "POST",
-            //         body: JSON.stringify(person.data)
-            //     })
-            //     .then(function (res) { console.log(res) })
-            //     .catch(function (res) { console.log(res) })
 
             const rawResponse = await fetch('http://127.0.0.1:8000/api/people', {
                 method: 'POST',
