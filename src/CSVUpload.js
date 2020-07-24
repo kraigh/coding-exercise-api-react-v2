@@ -7,11 +7,13 @@ import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
 const buttonRef = React.createRef()
 
 export default class CSVReader1 extends Component {
-    state = { modalOpen: false, importing: false, data: {}, number: 0 }
+    state = { modalOpen: false, importing: false, data: {}, number: 0, errors: [], resultsModalOpen: false }
 
     handleOpen = () => this.setState({ modalOpen: true })
 
     handleClose = () => this.setState({ modalOpen: false })
+
+    handleResultsClose = () => this.setState({ resultsModalOpen: false })
 
     handleOpenDialog = (e) => {
         // Note that the ref is set async, so it might be null at some point 
@@ -52,13 +54,36 @@ export default class CSVReader1 extends Component {
         // import users
         for await (let person of this.state.data) {
             console.log(person.data);
+            // fetch('http://127.0.0.1:8000/api/people',
+            //     {
+            //         headers: {
+            //             'Accept': 'application/json',
+            //             'Content-Type': 'application/json'
+            //         },
+            //         method: "POST",
+            //         body: JSON.stringify(person.data)
+            //     })
+            //     .then(function (res) { console.log(res) })
+            //     .catch(function (res) { console.log(res) })
+
+            const rawResponse = await fetch('http://127.0.0.1:8000/api/people', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(person.data)
+            });
+            const content = await rawResponse.json();
+            console.log(content);
+            if (content.errors) {
+                this.setState({errors: [...this.state.errors, content.errors]})
+            }
         };
         console.log('done');
-        // this.handleClose();
-    }
-
-    importUser = (user) => {
-
+        this.setState({ importing: false})
+        this.setState({modalOpen: false})
+        this.setState({resultsModalOpen: true})
     }
 
     render() {
@@ -108,6 +133,25 @@ export default class CSVReader1 extends Component {
                             <Button color='red' onClick={this.handleClose} inverted>
                                 <Icon name='cancel' /> Cancel
                 </Button>
+                                </Modal.Actions>
+                            </Modal>
+                            <Modal
+                                open={this.state.resultsModalOpen}
+                                onClose={this.handleResultsClose}
+                                basic
+                                size='small'
+                            >
+                                <Header icon='browser' content='Import People Results' />
+                                <Modal.Content>
+                                    
+                                    <h3>Import Done</h3>
+                                    <p>There were {this.state.errors.length} errors.</p>
+
+                                </Modal.Content>
+                                <Modal.Actions>
+                                    <Button color='red' onClick={this.handleResultsClose} inverted>
+                                        <Icon name='cancel' /> Close
+                    </Button>
                                 </Modal.Actions>
                             </Modal>
                             </div>
