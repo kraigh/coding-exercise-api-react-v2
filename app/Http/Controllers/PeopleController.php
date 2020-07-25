@@ -114,6 +114,8 @@ class PeopleController extends Controller
      */
     public function add_group(Request $request, $id) {
         $person = Person::findOrFail($id);
+
+        // prevent multiple groups being added to one person
         $existingJoin = PersonGroupJoin::firstWhere('person_id', $id);
         if ($existingJoin) {
             // error handle
@@ -129,5 +131,24 @@ class PeopleController extends Controller
                 ->response()
                 ->setStatusCode(201);
             }
+    }
+    /**
+     * Search for a person
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        if ($request->email) {
+            $person = Person::where('email', $request->email)->firstOrFail();
+        } else if ($request->first_name && $request->last_name) {
+            $person = Person::where('first_name', $request->first_name)->where('last_name', $request->last_name)->firstOrFail();
+        } else {
+            return response('Improper Search', 400);
+        }
+        return (new PersonResource($person))
+            ->response()
+            ->setStatusCode(201);
     }
 }

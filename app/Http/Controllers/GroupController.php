@@ -109,10 +109,9 @@ class GroupController extends Controller
      */
     public function search($group_name)
     {
-        $group = Group::where('group_name', $group_name)->firstOrFail();
-        
-        return (new GroupResource($group))
-            ->response()
-            ->setStatusCode(200);
+        $group = Group::where('group_name', $group_name)->first();
+            return (new GroupResource($group))
+                ->response()
+                ->setStatusCode(200);
     }
 }

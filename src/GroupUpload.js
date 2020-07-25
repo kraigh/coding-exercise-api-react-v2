@@ -98,11 +98,51 @@ export default class CSVReader2 extends Component {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(searchData)
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        return Promise.reject(response);
+                    }
+                }).catch(function (err) {
+                    console.warn('Could not find a person');
                 });
-                const content = await rawResponse.json();
-                console.log(content);
-                if (content.errors) {
-                    this.setState({ errors: [...this.state.errors, content.errors] })
+
+                if (typeof rawResponse !== "undefined") {
+
+                    let groupId;
+                    // search for group by name
+                    const rawResponse = await fetch('http://127.0.0.1:8000/api/groups/search/' + encodeURI(group.data[groupNameKey]), {
+                        method: 'GET'
+                    }).then(function (response) {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            return Promise.reject(response);
+                        }
+                    }).catch(function (err) {
+                        console.warn('Could not find a group');
+                    });
+                    console.log('foo');
+                    console.log(rawResponse);
+                    if (typeof rawResponse !== "undefined") {
+                        groupId = rawResponse['data']['id'];
+                    } else {
+
+                        // add group
+                        const rawResponse = await fetch('http://127.0.0.1:8000/api/groups', {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ group_name: group.data[groupNameKey]})
+                        });
+                        const content = await rawResponse.json();
+                        groupId = content['data']['id'];
+                    }
+                    console.log(groupId);
+
                 }
                 console.log('done');
                 this.setState({ importing: false })
