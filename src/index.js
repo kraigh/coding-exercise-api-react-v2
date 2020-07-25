@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Container, Header } from "semantic-ui-react";
+import { Container, Header, Tab } from "semantic-ui-react";
 
 import ResultsList from "./ResultsList";
-import CSVUpload from "./CSVUpload";
+import PersonUpload from "./PersonUpload";
+import GroupUpload from "./GroupUpload";
 
 const App = ({ children }) => (
   <Container style={{ margin: 20 }}>
@@ -18,10 +19,26 @@ styleLink.rel = "stylesheet";
 styleLink.href = "https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
 document.head.appendChild(styleLink);
 
+const panes = [
+  {
+    menuItem: { key: 'people', icon: 'user', content: 'People' },
+    render: () => <Tab.Pane attached={false}>
+      <PersonUpload />
+      <ResultsList />
+    </Tab.Pane>,
+  },
+  {
+    menuItem: { key: 'groups', icon: 'users', content: 'Groups' },
+    render: () => <Tab.Pane attached={false}>
+      <GroupUpload />
+      <ResultsList />
+    </Tab.Pane>,
+  },
+]
+
 ReactDOM.render(
   <App>
-    <CSVUpload />
-    <ResultsList />
+    <Tab menu={{ secondary: true }} panes={panes} />
   </App>,
   document.getElementById("root")
 );

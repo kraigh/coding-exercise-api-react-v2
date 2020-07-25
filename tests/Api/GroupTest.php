@@ -81,4 +81,18 @@ class GroupControllerTest extends TestCase
         $response->assertStatus(404);
 
     }
+
+    public function testGroupSearch()
+    {
+        $group = factory('App\Models\Group')->create();
+        $expected = [
+            'id' => $group->id
+        ];
+
+        $searchResponse = $this->json('GET', '/api/groups/search/' . $group->group_name);
+        $searchResponse
+            ->assertStatus(200)
+            ->assertJsonFragment($expected);
+
+    }
 }

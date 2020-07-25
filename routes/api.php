@@ -16,3 +16,4 @@ use Illuminate\Http\Request;
 Route::resource('people', 'PeopleController');
 Route::resource('groups', 'GroupController');
 Route::post('people/{id}/group', 'PeopleController@add_group');
+Route::get('groups/search/{group_name}', 'GroupController@search');

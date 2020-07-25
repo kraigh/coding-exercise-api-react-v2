@@ -100,4 +100,19 @@ class GroupController extends Controller
 
         return response()->json(null, 204);
     }
+
+    /**
+     * find a specified group by name.
+     *
+     * @param  string $group_name
+     * @return \Illuminate\Http\Response
+     */
+    public function search($group_name)
+    {
+        $group = Group::where('group_name', $group_name)->firstOrFail();
+        
+        return (new GroupResource($group))
+            ->response()
+            ->setStatusCode(200);
+    }
 }
