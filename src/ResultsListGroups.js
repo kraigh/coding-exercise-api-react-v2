@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Table } from 'semantic-ui-react'
+import { Table, Icon } from 'semantic-ui-react'
 
 class ResultsListGroups extends Component {
     constructor(props) {
@@ -32,16 +32,24 @@ class ResultsListGroups extends Component {
             {
               groups.map((group, index) => {
                 return (
-                  <div>
-                  <h2 key={index}>{group.group_name}</h2>
-                    {
-                      group.people.map((person, index) => {
-                        return (
-                          <p key={index}>{person.first_name}</p>
-                        );
-                      })
-                    }
-                  </div>
+                  <Table celled padded fixed striped key={index}>
+                    <Table.Header>
+                      <Table.Row>
+                        <Table.HeaderCell colSpan='3'><Icon name='users' /> {group.group_name}</Table.HeaderCell>
+                      </Table.Row>
+                    </Table.Header>
+                      {
+                        group.people.map((person, index) => {
+                          return (
+                            <Table.Row key={index}>
+                              <Table.Cell>{person.first_name}</Table.Cell>
+                              <Table.Cell>{person.last_name}</Table.Cell>
+                              <Table.Cell>{person.email_address}</Table.Cell>
+                            </Table.Row>
+                          );
+                        })
+                      }
+                  </Table>
                 );
               })
             }
