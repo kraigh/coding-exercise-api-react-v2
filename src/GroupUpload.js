@@ -64,11 +64,11 @@ export default class CSVReader2 extends Component {
             let emailKey = Object.keys(group.data).filter(key => RegExp('.*email.*', 'i').test(key));
             let fullKey = Object.keys(group.data).filter(key => RegExp('(?!.*first.*)(?!.*last)(?:^name)|(?:.*full.*)', 'i').test(key));
             let searchData = {};
-            if (fullKey || (firstKey && lastKey)) {
+            if (fullKey.length > 0 || (firstKey.length > 0 && lastKey.length > 0)) {
                 // search by name
                 let firstName;
                 let lastName;
-                if (!fullKey) {
+                if (fullKey.length === 0) {
                     firstName = group.data[firstKey];
                     lastName = group.data[lastKey];
                 } else {
@@ -80,7 +80,7 @@ export default class CSVReader2 extends Component {
                     first_name: firstName,
                     last_name: lastName
                 }
-            } else if (emailKey) {
+            } else if (emailKey.length > 0) {
                 // search by email
                 searchData = {
                     email: group.data[emailKey]
@@ -90,6 +90,7 @@ export default class CSVReader2 extends Component {
             }
 
             if (Object.keys(searchData).length !== 0) {
+                console.log(searchData);
                 const rawResponse = await fetch('http://127.0.0.1:8000/api/people/search', {
                     method: 'POST',
                     headers: {
