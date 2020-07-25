@@ -8,6 +8,7 @@ use Illuminate\Validation\Rule;
 use App\Http\Resources\PeopleCollection;
 use App\Http\Resources\PersonResource;
 use App\Models\Person;
+use App\Models\PersonGroupJoin;
 
 class PeopleController extends Controller
 {
@@ -102,5 +103,33 @@ class PeopleController extends Controller
         $person->delete();
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Get a group associated with a person
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    // public function get_group($id)
+    // {
+    //     $person = Person::findOrFail($id);
+        
+    //     return new PersonResource
+
+    //     return response()->json(null, 204);
+    // }
+
+    public function add_group(Request $request, $id) {
+        $person = Person::findOrFail($id);
+        $personGroupJoin = PersonGroupJoin::create([
+            'person_id' => $id,
+            'group_id' => $request->group_id,
+        ]);
+        $personGroupJoin->save;
+
+        return (new PersonResource($person))
+            ->response()
+            ->setStatusCode(201);
     }
 }

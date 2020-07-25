@@ -87,6 +87,24 @@ class PeopleControllerTest extends TestCase
 
         $response = $this->json('GET', '/api/people/' . $person->id);
         $response->assertStatus(404);
+        
+
+    }
+
+    public function testPersonAddedToGroup()
+    {
+        $person = factory('App\Models\Person')->create();
+        $group = factory('App\Models\Group')->create();
+        $data = [
+            'group_id' => $group->id
+        ];
+        $response = $this->json('POST', '/api/people/'.$person->id.'/group', $data);
+        $response
+            ->assertStatus(201);
+
+        $updatedPerson = Person::find($person->id);
+
+        $this->assertEquals($group->id, $updatedPerson->groups[0]->id);
 
     }
 }

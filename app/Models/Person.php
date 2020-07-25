@@ -12,4 +12,12 @@ class Person extends Model
         'email_address',
         'status'
     ];
+
+    /**
+     * The groups that belong to the person.
+     */
+    public function groups()
+    {
+        return $this->belongsToMany('App\Models\Group', 'person_group_joins', 'person_id', 'group_id');
+    }
 }
