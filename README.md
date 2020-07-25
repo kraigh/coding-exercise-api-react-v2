@@ -89,3 +89,22 @@ UI tests can be run with `yarn test`
 We’re a fully remote team so communication is really important. Be sure to include any instructions needed for any of our team mates to run and test.
 
 Good luck and we'll get back to you once we review it!
+
+# Completion Notes
+
+Thank you for putting this challenge together, it was lots of fun! It took me
+probably 6 hours or so, in part because I'm new to Laravel and had to read some
+documentation, and in part because I'm a perfectionist and probably polished it a
+bit too much! A few notes:
+
+- The React code is a little messy, for a production level app I'd prefer to break stuff out into api library files and smaller components, but I figured keeping it all together migth be quicker and easier to review.
+- I added api tests, run with `php artisan test`
+- I ended up creating a join table for recording people's membership in groups, so make sure you run migrations with `php artisan migrate`.
+- The instructions indicate a one-to-one people -> group relationship but I made it many-to-many.
+- I added files for testing, a `people.csv` for importing people, and `groups.csv`, `groups2.csv` and `groups3.csv` for group membership, showing a few different methods for importing people into groups.
+- As I noted in a comment, the behavior of a page refresh after the import is hacky and undesireable, but I didn't want to spend the time to do some state lifting so I figured it would be fine for a demo!
+
+Thanks again!
+
+Kraig Hufstedler
+kraigory@gmail.com
