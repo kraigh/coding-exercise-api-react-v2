@@ -55,14 +55,18 @@ export default class CSVReader1 extends Component {
     importPeople = async (e) => {
         this.setState({importing: true});
         console.log(this.state.data);
-        // import users
+
+        // loop through users from CSV
         for await (let person of this.state.data) {
-            console.log(person.data);
+
+            // look for headers with data we want
             let emailKey = Object.keys(person.data).filter(key => RegExp('.*email.*', 'i').test(key));
             let firstKey = Object.keys(person.data).filter(key => RegExp('.*first.*', 'i').test(key));
             let lastKey = Object.keys(person.data).filter(key => RegExp('.*last.*', 'i').test(key));
             let statusKey = Object.keys(person.data).filter(key => RegExp('.*status.*', 'i').test(key));
-            if (emailKey && firstKey && lastKey && statusKey) {
+            
+            // if all required fields are found. In future add else statement and show error
+            if (emailKey.length > 0 && firstKey.length > 0 && lastKey.length > 0 && statusKey.length > 0) {
 
                 let validatedPerson = {
                     'first_name': person.data[firstKey],
@@ -71,7 +75,7 @@ export default class CSVReader1 extends Component {
                     'status': person.data[statusKey]
                 }
 
-
+                // add person
                 const rawResponse = await fetch('http://127.0.0.1:8000/api/people', {
                     method: 'POST',
                     headers: {
@@ -81,16 +85,21 @@ export default class CSVReader1 extends Component {
                     body: JSON.stringify(validatedPerson)
                 });
                 const content = await rawResponse.json();
-                console.log(content);
                 if (content.errors) {
                     this.setState({errors: [...this.state.errors, content.errors]})
                 }
             }
-        };
-        console.log('done');
+        }
+
+        // reset ui
         this.setState({ importing: false})
         this.setState({modalOpen: false})
         this.setState({resultsModalOpen: true})
+
+        // this is hacky but since the upload and results dont share
+        // state this is the easiest way to reload the results... obviously
+        // should be different in a real app!
+        window.location.reload(false);
     }
 
     render() {
@@ -136,10 +145,10 @@ export default class CSVReader1 extends Component {
                                 <Modal.Actions>
                                     <Button color='green' onClick={this.importPeople} inverted>
                                         <Icon name='checkmark' /> Import
-                </Button>
+                                    </Button>
                             <Button color='red' onClick={this.handleClose} inverted>
                                 <Icon name='cancel' /> Cancel
-                </Button>
+                            </Button>
                                 </Modal.Actions>
                             </Modal>
                             <Modal
@@ -158,7 +167,7 @@ export default class CSVReader1 extends Component {
                                 <Modal.Actions>
                                     <Button color='red' onClick={this.handleResultsClose} inverted>
                                         <Icon name='cancel' /> Close
-                    </Button>
+                                    </Button>
                                 </Modal.Actions>
                             </Modal>
                             </div>

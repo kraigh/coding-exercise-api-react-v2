@@ -115,22 +115,24 @@ class PeopleController extends Controller
     public function add_group(Request $request, $id) {
         $person = Person::findOrFail($id);
 
-        // prevent multiple groups being added to one person
+        // prevent multiple of the same group being added to one person
         $existingJoin = PersonGroupJoin::firstWhere('person_id', $id);
         if ($existingJoin) {
-            // error handle
-            abort(500, 'Person already belongs to group.');
-        } else {
-            $personGroupJoin = PersonGroupJoin::create([
-                'person_id' => $id,
-                'group_id' => $request->group_id,
-            ]);
-            $personGroupJoin->save;
-
-            return (new PersonResource($person))
-                ->response()
-                ->setStatusCode(201);
+            if ($existingJoin->group_id == $request->group_id) {
+                // error handle
+                abort(500, 'Person already belongs to this group.');
             }
+        }
+
+        $personGroupJoin = PersonGroupJoin::create([
+            'person_id' => $id,
+            'group_id' => $request->group_id,
+        ]);
+        $personGroupJoin->save;
+
+        return (new PersonResource($person))
+            ->response()
+            ->setStatusCode(201);
     }
     /**
      * Search for a person
@@ -140,8 +142,8 @@ class PeopleController extends Controller
      */
     public function search(Request $request)
     {
-        if ($request->email) {
-            $person = Person::where('email', $request->email)->firstOrFail();
+        if ($request->email_address) {
+            $person = Person::where('email_address', $request->email_address)->firstOrFail();
         } else if ($request->first_name && $request->last_name) {
             $person = Person::where('first_name', $request->first_name)->where('last_name', $request->last_name)->firstOrFail();
         } else {

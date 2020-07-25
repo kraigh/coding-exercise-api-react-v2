@@ -9,10 +9,14 @@ class ResultsListGroups extends Component {
 
     componentDidMount() {
         let filledGroups = [];
+        // Get all groups
         fetch("http://localhost:8000/api/groups")
           .then(response => response.json())
           .then(async (groups) => {
+
+            // loop through groups to get people
             for await (let group of groups.data) {
+              // get people in group
               const rawResponse = await fetch("http://localhost:8000/api/groups/"+group.id+"/people")
               const people = await rawResponse.json();
               group.people = people;
@@ -38,6 +42,7 @@ class ResultsListGroups extends Component {
                         <Table.HeaderCell colSpan='3'><Icon name='users' /> {group.group_name}</Table.HeaderCell>
                       </Table.Row>
                     </Table.Header>
+                    <Table.Body>
                       {
                         group.people.map((person, index) => {
                           return (
@@ -49,6 +54,7 @@ class ResultsListGroups extends Component {
                           );
                         })
                       }
+                    </Table.Body>
                   </Table>
                 );
               })
