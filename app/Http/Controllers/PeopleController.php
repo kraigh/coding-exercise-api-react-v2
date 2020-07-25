@@ -106,30 +106,28 @@ class PeopleController extends Controller
     }
 
     /**
-     * Get a group associated with a person
+     * Add a person to a group.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function get_group($id)
-    // {
-    //     $person = Person::findOrFail($id);
-        
-    //     return new PersonResource
-
-    //     return response()->json(null, 204);
-    // }
-
     public function add_group(Request $request, $id) {
         $person = Person::findOrFail($id);
-        $personGroupJoin = PersonGroupJoin::create([
-            'person_id' => $id,
-            'group_id' => $request->group_id,
-        ]);
-        $personGroupJoin->save;
+        $existingJoin = PersonGroupJoin::firstWhere('person_id', $id);
+        if ($existingJoin) {
+            // error handle
+            abort(500, 'Person already belongs to group.');
+        } else {
+            $personGroupJoin = PersonGroupJoin::create([
+                'person_id' => $id,
+                'group_id' => $request->group_id,
+            ]);
+            $personGroupJoin->save;
 
-        return (new PersonResource($person))
-            ->response()
-            ->setStatusCode(201);
+            return (new PersonResource($person))
+                ->response()
+                ->setStatusCode(201);
+            }
     }
 }
