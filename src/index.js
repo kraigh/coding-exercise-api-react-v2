@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { Container, Header, Tab } from "semantic-ui-react";
 
 import ResultsList from "./ResultsList";
+import ResultsListGroups from "./ResultsListGroups";
 import PersonUpload from "./PersonUpload";
 import GroupUpload from "./GroupUpload";
 
@@ -31,7 +32,7 @@ const panes = [
     menuItem: { key: 'groups', icon: 'users', content: 'Groups' },
     render: () => <Tab.Pane attached={false}>
       <GroupUpload />
-      <ResultsList />
+      <ResultsListGroups />
     </Tab.Pane>,
   },
 ]

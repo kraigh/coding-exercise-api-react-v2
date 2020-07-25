@@ -114,4 +114,16 @@ class GroupController extends Controller
                 ->response()
                 ->setStatusCode(200);
     }
+
+    /**
+     * find people in a group
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function people($id)
+    {
+        $group = Group::findOrFail($id);
+        return response()->json($group->people, 200);
+    }
 }

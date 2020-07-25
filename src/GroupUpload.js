@@ -89,6 +89,7 @@ export default class CSVReader2 extends Component {
                 console.log('no acceptible user key found');
             }
 
+            let person;
             if (Object.keys(searchData).length !== 0) {
                 console.log(searchData);
                 const rawResponse = await fetch('http://127.0.0.1:8000/api/people/search', {
@@ -109,10 +110,11 @@ export default class CSVReader2 extends Component {
                 });
 
                 if (typeof rawResponse !== "undefined") {
+                    person = rawResponse['data'];
 
                     let groupId;
                     // search for group by name
-                    const rawResponse = await fetch('http://127.0.0.1:8000/api/groups/search/' + encodeURI(group.data[groupNameKey]), {
+                    const rawResponse2 = await fetch('http://127.0.0.1:8000/api/groups/search/' + encodeURI(group.data[groupNameKey]), {
                         method: 'GET'
                     }).then(function (response) {
                         if (response.ok) {
@@ -124,13 +126,13 @@ export default class CSVReader2 extends Component {
                         console.warn('Could not find a group');
                     });
                     console.log('foo');
-                    console.log(rawResponse);
-                    if (typeof rawResponse !== "undefined") {
-                        groupId = rawResponse['data']['id'];
+                    console.log(rawResponse2);
+                    if (typeof rawResponse2 !== "undefined") {
+                        groupId = rawResponse2['data']['id'];
                     } else {
 
                         // add group
-                        const rawResponse = await fetch('http://127.0.0.1:8000/api/groups', {
+                        const rawResponse3 = await fetch('http://127.0.0.1:8000/api/groups', {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
@@ -138,10 +140,23 @@ export default class CSVReader2 extends Component {
                             },
                             body: JSON.stringify({ group_name: group.data[groupNameKey]})
                         });
-                        const content = await rawResponse.json();
+                        const content = await rawResponse3.json();
                         groupId = content['data']['id'];
                     }
                     console.log(groupId);
+
+                    // add group
+                    const rawResponse4 = await fetch('http://127.0.0.1:8000/api/people/'+ person['id']+'/group', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ group_id: groupId })
+                    });
+                    const content = await rawResponse4.json();
+                    console.log(content);
+
 
                 }
                 console.log('done');
